@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AddressBook_ADO.NET
 {
-    class DBConnection
+    public class DBConnection
     {
         /// <summary>
         /// Gets the connection.
