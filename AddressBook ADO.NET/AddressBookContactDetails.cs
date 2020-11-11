@@ -20,6 +20,8 @@ namespace AddressBook_ADO.NET
         public int typeId { get; set; }
         public string typeName { get; set; }
 
+        public DateTime dateAdded { get; set; }
+
         public override bool Equals(Object obj)
         {
             if (obj == null)
