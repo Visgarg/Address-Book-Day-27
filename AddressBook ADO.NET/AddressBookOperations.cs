@@ -193,5 +193,60 @@ namespace AddressBook_ADO.NET
             }
 
         }
+        public List<AddressBookContactDetails> GetAllContactDetailsForParticularDateRange()
+        {
+            //defining list for adding data
+            List<AddressBookContactDetails> contactDetailsList = new List<AddressBookContactDetails>();
+            //getting sql connection
+            SqlConnection connection = dBConnection.GetConnection();
+            //using connection, if available
+            try
+            {
+                using (connection)
+                {
+                    //sql command using stored procedure
+                    SqlCommand command = new SqlCommand("select * from addressbook where dateadded between cast('2019-01-01' as date) and cast('2020-01-01' as date)", connection);
+                    //command.CommandType = System.Data.CommandType.StoredProcedure;
+                    connection.Open();
+                    //sql data reader class for reading data 
+                    SqlDataReader dr = command.ExecuteReader();
+                    //executes if rows are there in database tables
+                    if (dr.HasRows)
+                    {
+                        //iterates until data is read across rows
+                        while (dr.Read())
+                        {
+                            //saving data in contact details object
+                            AddressBookContactDetails contactDetails = new AddressBookContactDetails();
+                            contactDetails.firstName = dr.GetString(0);
+                            contactDetails.lastName = dr.GetString(1);
+                            contactDetails.address = dr.GetString(2);
+                            contactDetails.city = dr.GetString(3);
+                            contactDetails.state = dr.GetString(4);
+                            contactDetails.zip = dr.GetInt32(5);
+                            contactDetails.phoneNo = dr.GetInt64(6);
+                            contactDetails.eMail = dr.GetString(7);
+                            //adding details in contact details list
+                            contactDetailsList.Add(contactDetails);
+                        }
+                        //closing execute reader connection
+                        dr.Close();
+                        //closing sql connection
+                        connection.Close();
+                        //returns list
+                        return contactDetailsList;
+                    }
+                    else
+                    {
+                        throw new Exception("No data found in the database");
+                    }
+                }
+            }
+            //catching up exception
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

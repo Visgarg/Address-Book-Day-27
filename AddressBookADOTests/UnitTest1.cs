@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AddressBook_ADO.NET;
 using System;
+using System.Collections.Generic;
 
 namespace AddressBookADOTests
 {
@@ -46,8 +47,20 @@ namespace AddressBookADOTests
             AddressBookContactDetails expected=  addressBookOperations.GettingUpdatedDetails(contactDetails);
             //assert
             Assert.AreEqual(expected, actual);
-
-
+        }
+        [TestMethod]
+        public void CheckingForGettingContactDetailsInParticularTimeRange()
+        {
+            //creating list for expected output
+            List<AddressBookContactDetails> contactDetailsExpected = new List<AddressBookContactDetails>();
+            //adding data
+            contactDetailsExpected.Add(new AddressBookContactDetails { firstName = "abc", lastName = "xyz", address = "pqr", city = "Bangalore", state = "Karnataka", zip = 123456, phoneNo = 9419494949, eMail = "abc.xyz" });
+            //instatiating object for address book operations
+            AddressBookOperations addressBookOperations = new AddressBookOperations();
+            //getting actual contact list from address book operations-getting contact details from particular date range
+            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsForParticularDateRange();
+            //assert for comparing list
+            CollectionAssert.AreEqual(contactDetailsActual, contactDetailsExpected);
         }
     }
  
