@@ -193,7 +193,17 @@ namespace AddressBook_ADO.NET
             }
 
         }
-        public List<AddressBookContactDetails> GetAllContactDetailsForParticularDateRange()
+        /// <summary>
+        /// Gets all contact details with conditions.
+        /// for particular date range UC18
+        /// for particular state or city UC19
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception">
+        /// No data found in the database
+        /// or
+        /// </exception>
+        public List<AddressBookContactDetails> GetAllContactDetailsWithConditions()
         {
             //defining list for adding data
             List<AddressBookContactDetails> contactDetailsList = new List<AddressBookContactDetails>();
@@ -205,7 +215,12 @@ namespace AddressBook_ADO.NET
                 using (connection)
                 {
                     //sql command using stored procedure
-                    SqlCommand command = new SqlCommand("select * from addressbook where dateadded between cast('2019-01-01' as date) and cast('2020-01-01' as date)", connection);
+                    //for particular date range
+                    //SqlCommand command = new SqlCommand("select * from addressbook where dateadded between cast('2019-01-01' as date) and cast('2020-01-01' as date)", connection);
+                    //for particular state
+                    //SqlCommand command = new SqlCommand("select * from addressbook where state='Karnataka'", connection);
+                    //for particular city
+                    SqlCommand command = new SqlCommand("select * from addressbook where city='Hisar'", connection);
                     //command.CommandType = System.Data.CommandType.StoredProcedure;
                     connection.Open();
                     //sql data reader class for reading data 

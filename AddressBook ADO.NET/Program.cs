@@ -26,10 +26,11 @@ namespace AddressBook_ADO.NET
                 Console.WriteLine(ex.Message);
             }
             //UC18 getting contact details in date range
+            //UC19 getting contact details for particular city or state
             Console.WriteLine("*************");
             try
             {
-                List<AddressBookContactDetails> contactDetailsListInDateRange = addressBookOperations.GetAllContactDetailsForParticularDateRange();
+                List<AddressBookContactDetails> contactDetailsListInDateRange = addressBookOperations.GetAllContactDetailsWithConditions();
                 contactDetailsListInDateRange.ForEach(contactDetails =>
                 {
                     Console.WriteLine("ContactID:- " + contactDetails.contactID + " First Name:- " + contactDetails.firstName + " Last Name:- " + contactDetails.lastName + " Address:- " + contactDetails.address + " City:- " + contactDetails.city + " State:- " + contactDetails.state + " Zip:- " + contactDetails.zip + " phone number:- " + contactDetails.phoneNo + " Email:- " + contactDetails.eMail);

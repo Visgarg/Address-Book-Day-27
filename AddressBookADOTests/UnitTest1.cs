@@ -31,6 +31,9 @@ namespace AddressBookADOTests
             Console.WriteLine(result);
             return contactDetails;
         }
+        /// <summary>
+        /// Checkings if contact details are getting updated. UC17
+        /// </summary>
         [TestMethod]
         public void CheckingIfContactDetailsAreGettingUpdated()
         {
@@ -48,6 +51,9 @@ namespace AddressBookADOTests
             //assert
             Assert.AreEqual(expected, actual);
         }
+        /// <summary>
+        /// Checkings for getting contact details in particular time range. UC18
+        /// </summary>
         [TestMethod]
         public void CheckingForGettingContactDetailsInParticularTimeRange()
         {
@@ -58,7 +64,43 @@ namespace AddressBookADOTests
             //instatiating object for address book operations
             AddressBookOperations addressBookOperations = new AddressBookOperations();
             //getting actual contact list from address book operations-getting contact details from particular date range
-            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsForParticularDateRange();
+            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsWithConditions();
+            //assert for comparing list
+            CollectionAssert.AreEqual(contactDetailsActual, contactDetailsExpected);
+        }
+        /// <summary>
+        /// Checkings for getting contact details for particular state. UC19
+        /// </summary>
+        [TestMethod]
+        public void CheckingForGettingContactDetailsForParticularState()
+        {
+            //creating list for expected output
+            List<AddressBookContactDetails> contactDetailsExpected = new List<AddressBookContactDetails>();
+            //adding data
+            contactDetailsExpected.Add(new AddressBookContactDetails { firstName = "abc", lastName = "xyz", address = "pqr", city = "Bangalore", state = "Karnataka", zip = 123456, phoneNo = 9419494949, eMail = "abc.xyz" });
+            //instatiating object for address book operations
+            AddressBookOperations addressBookOperations = new AddressBookOperations();
+            //getting actual contact list from address book operations-getting contact details from particular date range
+            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsWithConditions();
+            //assert for comparing list
+            CollectionAssert.AreEqual(contactDetailsActual, contactDetailsExpected);
+        }
+        /// <summary>
+        /// Checkings for getting contact details for particular city. UC19
+        /// </summary>
+        [TestMethod]
+        public void CheckingForGettingContactDetailsForParticularCity()
+        {
+            //creating list for expected output
+            List<AddressBookContactDetails> contactDetailsExpected = new List<AddressBookContactDetails>();
+            //adding data
+            contactDetailsExpected.Add(new AddressBookContactDetails { firstName = "Vishal", lastName = "Garg", address = "Barwala", city = "Hisar", state = "Haryana", zip = 125121, phoneNo = 8570934858, eMail = "vishal.garg" });
+            contactDetailsExpected.Add(new AddressBookContactDetails { firstName = "Mahak", lastName = "Singla", address = "address", city = "Hisar", state = "Haryana", zip = 125001, phoneNo = 9494949494, eMail = "mahak.singla" });
+
+            //instatiating object for address book operations
+            AddressBookOperations addressBookOperations = new AddressBookOperations();
+            //getting actual contact list from address book operations-getting contact details from particular date range
+            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsWithConditions();
             //assert for comparing list
             CollectionAssert.AreEqual(contactDetailsActual, contactDetailsExpected);
         }
