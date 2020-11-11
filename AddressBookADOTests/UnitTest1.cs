@@ -64,7 +64,7 @@ namespace AddressBookADOTests
             //instatiating object for address book operations
             AddressBookOperations addressBookOperations = new AddressBookOperations();
             //getting actual contact list from address book operations-getting contact details from particular date range
-            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsWithConditions();
+            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsWithConditions(1);
             //assert for comparing list
             CollectionAssert.AreEqual(contactDetailsActual, contactDetailsExpected);
         }
@@ -81,7 +81,7 @@ namespace AddressBookADOTests
             //instatiating object for address book operations
             AddressBookOperations addressBookOperations = new AddressBookOperations();
             //getting actual contact list from address book operations-getting contact details from particular date range
-            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsWithConditions();
+            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsWithConditions(2);
             //assert for comparing list
             CollectionAssert.AreEqual(contactDetailsActual, contactDetailsExpected);
         }
@@ -100,7 +100,7 @@ namespace AddressBookADOTests
             //instatiating object for address book operations
             AddressBookOperations addressBookOperations = new AddressBookOperations();
             //getting actual contact list from address book operations-getting contact details from particular date range
-            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsWithConditions();
+            List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsWithConditions(3);
             //assert for comparing list
             CollectionAssert.AreEqual(contactDetailsActual, contactDetailsExpected);
         }

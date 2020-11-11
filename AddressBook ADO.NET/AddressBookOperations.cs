@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace AddressBook_ADO.NET
@@ -203,25 +205,36 @@ namespace AddressBook_ADO.NET
         /// No data found in the database
         /// or
         /// </exception>
-        public List<AddressBookContactDetails> GetAllContactDetailsWithConditions()
+        public List<AddressBookContactDetails> GetAllContactDetailsWithConditions(int task)
         {
             //defining list for adding data
             List<AddressBookContactDetails> contactDetailsList = new List<AddressBookContactDetails>();
             //getting sql connection
             SqlConnection connection = dBConnection.GetConnection();
+            string query="0";
             //using connection, if available
             try
             {
                 using (connection)
                 {
-                    //sql command using stored procedure
-                    //for particular date range
-                    //SqlCommand command = new SqlCommand("select * from addressbook where dateadded between cast('2019-01-01' as date) and cast('2020-01-01' as date)", connection);
-                    //for particular state
-                    //SqlCommand command = new SqlCommand("select * from addressbook where state='Karnataka'", connection);
-                    //for particular city
-                    SqlCommand command = new SqlCommand("select * from addressbook where city='Hisar'", connection);
+                    if (task == 1)
+                    {
+                        //sql command using stored procedure
+                        //for particular date range
+                         query= "select * from addressbook where dateadded between cast('2019-01-01' as date) and getdate()";
+                    }
+                    if (task == 2)
+                    {
+                        //for particular state
+                         query= "select * from addressbook where state='Karnataka'";
+                    }
+                    if (task == 3)
+                    {
+                        //for particular city
+                        query= "select * from addressbook where city='Hisar'";
+                    }
                     //command.CommandType = System.Data.CommandType.StoredProcedure;
+                    SqlCommand command = new SqlCommand(query, connection);
                     connection.Open();
                     //sql data reader class for reading data 
                     SqlDataReader dr = command.ExecuteReader();
@@ -241,6 +254,8 @@ namespace AddressBook_ADO.NET
                             contactDetails.zip = dr.GetInt32(5);
                             contactDetails.phoneNo = dr.GetInt64(6);
                             contactDetails.eMail = dr.GetString(7);
+                            contactDetails.contactID = dr.GetInt32(8);
+                            contactDetails.dateAdded = dr.GetDateTime(9);
                             //adding details in contact details list
                             contactDetailsList.Add(contactDetails);
                         }
@@ -261,6 +276,49 @@ namespace AddressBook_ADO.NET
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+        public bool AddingContactDetailsInDatabase(AddressBookContactDetails contactDetails)
+        {
+            SqlConnection connection = dBConnection.GetConnection();
+            try
+            {
+                using(connection)
+                {
+                    SqlCommand command = new SqlCommand();
+                    command.CommandText = "InsertingData";
+                    command.Connection = connection;
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@firstname", contactDetails.firstName);
+                    command.Parameters.AddWithValue("@lastname", contactDetails.lastName);
+                    command.Parameters.AddWithValue("@address", contactDetails.address);
+                    command.Parameters.AddWithValue("@city", contactDetails.city);
+                    command.Parameters.AddWithValue("@state", contactDetails.state);
+                    command.Parameters.AddWithValue("@zip", contactDetails.zip);
+                    command.Parameters.AddWithValue("@phonenumber", contactDetails.phoneNo);
+                    command.Parameters.AddWithValue("@email", contactDetails.eMail);
+                    command.Parameters.AddWithValue("@dateadded", contactDetails.dateAdded);
+                    command.Parameters.AddWithValue("@addressbookname", contactDetails.addressBookName);
+                    connection.Open();
+                    int result = command.ExecuteNonQuery();
+                    if(result!=0)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+                
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+            finally
+            {
+                if (connection.State == System.Data.ConnectionState.Open)
+                    connection.Close();
             }
         }
     }
