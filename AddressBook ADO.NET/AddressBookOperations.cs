@@ -4,6 +4,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AddressBook_ADO.NET
 {
@@ -278,14 +280,22 @@ namespace AddressBook_ADO.NET
                 throw new Exception(ex.Message);
             }
         }
+        /// <summary>
+        /// Addings the contact details in database. UC20
+        /// </summary>
+        /// <param name="contactDetails">The contact details.</param>
+        /// <returns></returns>
         public bool AddingContactDetailsInDatabase(AddressBookContactDetails contactDetails)
         {
+            //getting the connection
             SqlConnection connection = dBConnection.GetConnection();
             try
             {
+                //if connection is valid, then commands are executed
                 using(connection)
                 {
                     SqlCommand command = new SqlCommand();
+                    //stored procedure is added in command text.
                     command.CommandText = "InsertingData";
                     command.Connection = connection;
                     command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -300,6 +310,7 @@ namespace AddressBook_ADO.NET
                     command.Parameters.AddWithValue("@dateadded", contactDetails.dateAdded);
                     command.Parameters.AddWithValue("@addressbookname", contactDetails.addressBookName);
                     connection.Open();
+                    //executing query for adding data
                     int result = command.ExecuteNonQuery();
                     if(result!=0)
                     {
@@ -310,16 +321,47 @@ namespace AddressBook_ADO.NET
                 }
                 
             }
+            //catching exception
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return false;
             }
+            //finally block to close the connection
+            //this will execute, even if there is no error for catching exception.
             finally
             {
                 if (connection.State == System.Data.ConnectionState.Open)
                     connection.Close();
             }
+        }
+        /// <summary>
+        /// Addings the multiple contact details using threading. UC21
+        /// </summary>
+        /// <param name="contactDetails">The contact details.</param>
+        public void AddingMultipleContactDetailsUsingThreading(List<AddressBookContactDetails> contactDetails)
+        {
+            //whenever thread is used for multi threading, then multi threads are generated
+            //whenever task is used then only one thread works.
+            // but task is used for generating multi threads, specifically one thread for each task, but this is not happening in task.
+            //but it is happening in thread library.
+            contactDetails.ForEach(contactData =>
+            {
+                //using different thread for each contact data for faster adding of data into database.
+                Thread thread = new Thread(()=>
+                {
+                    Console.WriteLine("Address being added" + contactData.firstName);
+                    AddingContactDetailsInDatabase(contactData);
+                    //prints id for each thread
+                    Console.WriteLine("Thread id: " + Thread.CurrentThread.ManagedThreadId);
+                    Console.WriteLine("Contact added:" + contactData.firstName);
+                });
+                //starting a thread
+                thread.Start();
+                //thread.join-allows one thread to wait until another thread completes its execution. 
+                thread.Join();
+
+            });
         }
     }
 }
