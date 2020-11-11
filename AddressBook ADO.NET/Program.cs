@@ -60,7 +60,7 @@ namespace AddressBook_ADO.NET
                     case "3":
                         //UC20 Adding Contact Details into Database
                         AddressBookContactDetails contactDetails = new AddressBookContactDetails();
-                        contactDetails.firstName = "Aksita";
+                        contactDetails.firstName = "Rachael";
                         contactDetails.lastName = "Jai";
                         contactDetails.address = "Sector14";
                         contactDetails.city = "new Delhi";
