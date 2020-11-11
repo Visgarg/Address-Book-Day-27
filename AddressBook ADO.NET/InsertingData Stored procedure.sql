@@ -33,7 +33,9 @@ declare @addressbooknameexists varchar(30)
 				insert into addressbook(firstname,lastname,address,city,state,zip,phonenumber,email,dateadded)
 				values(@firstname,@lastname,@address,@city,@state,@zip,@phonenumber,@email,convert(date,@dateadded));
 			else 
-				THROW 50005, N'Data is already there in database', 1;
+				begin
+				Rollback Transaction
+				end
 			--insert into address book names
 			select @addressbooknameexists=addressBookName from AddressBookNames where addressBookName=@addressbookname
 			if(@addressbooknameexists is null)
@@ -44,7 +46,6 @@ declare @addressbooknameexists varchar(30)
 		End Try
 		Begin catch
 		   --if error, roll back changes done by any of the sql queries
-		   PRINT 'In catch block.'; 
 		  Rollback transaction
 		End catch
 End

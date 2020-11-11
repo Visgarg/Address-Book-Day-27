@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AddressBook_ADO.NET;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace AddressBookADOTests
 {
@@ -103,6 +104,38 @@ namespace AddressBookADOTests
             List<AddressBookContactDetails> contactDetailsActual = addressBookOperations.GetAllContactDetailsWithConditions(3);
             //assert for comparing list
             CollectionAssert.AreEqual(contactDetailsActual, contactDetailsExpected);
+        }
+        /// <summary>
+        /// Multiple contacts to be added in the list by threading
+        /// </summary>
+        /// <returns></returns>
+        public List<AddressBookContactDetails> MultipleContactsToBeAddedInList()
+        {
+            List<AddressBookContactDetails> contactDetails = new List<AddressBookContactDetails>();
+            contactDetails.Add(new AddressBookContactDetails { firstName = "Joey", lastName = "Sidhar", address = "urban estate", city = "Noida", state = "UP", zip = 125124, phoneNo = 8528528525, eMail = "teenasidhar@gmail.com", dateAdded = Convert.ToDateTime("2016-01-01"),addressBookName= "E" });
+            contactDetails.Add(new AddressBookContactDetails { firstName = "peter", lastName = "Sehrawat", address = "Model Town", city = "Hyderabad", state = "Telangana", zip = 124424, phoneNo = 7568459855, eMail = "chelsysehrawat@gmail.com", dateAdded = Convert.ToDateTime("2016-01-01"), addressBookName = "E" });
+            contactDetails.Add(new AddressBookContactDetails { firstName = "Michael", lastName = "Jain", address = "Main Road", city = "Kolkota", state = "West Bengal", zip = 125144, phoneNo = 7539514566, eMail = "muditjain@gmail.com", dateAdded = Convert.ToDateTime("2016-01-01"), addressBookName = "F" });
+            contactDetails.Add(new AddressBookContactDetails { firstName = "Sindhu", lastName = "Goyal", address = "Ring Road", city = "Chennai", state = "Tamilnadu", zip = 125184, phoneNo = 9638257895, eMail = "vineetgoyal@gmail.com", dateAdded = Convert.ToDateTime("2016-01-01"), addressBookName = "F" });
+            return contactDetails;
+        }
+        /// <summary>
+        /// Addings the multiple contacts into data base using threading. UC21
+        /// </summary>
+        [TestMethod]
+        public void AddingMultipleContactsIntoDataBaseUsingThreading()
+        {
+            //instatiating address book operations object
+            AddressBookOperations addressBookOperations = new AddressBookOperations();
+            //getting data from multiple contacts to be added in list method
+            List<AddressBookContactDetails> contactDetails = MultipleContactsToBeAddedInList();
+            //starting stopwatch
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            //executing method of adding multiple contacts using threading 
+            addressBookOperations.AddingMultipleContactDetailsUsingThreading(contactDetails);
+            stopwatch.Stop();
+            Console.WriteLine("Elapsed Time: " + stopwatch.Elapsed);
+            
         }
     }
  
