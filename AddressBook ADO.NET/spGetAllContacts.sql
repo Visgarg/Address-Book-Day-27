@@ -15,3 +15,5 @@ join TypesOfContacts e
 on e.typeid= d.typeid
 end
 exec spGetAllContacts
+
+exec spupdatecontactdetails 'Vishal','Garg','Anaj Mandi Barwala','Hisar','Haryana',125121,8607533666,'vishal.garg@capgemini.com','A'

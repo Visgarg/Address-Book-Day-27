@@ -51,4 +51,5 @@ declare @addressbooknameexists varchar(30)
 End
 
 select * from AddressBook;
+select * from addressbooknames;
 exec InsertingData 'Apoorva','Garg','Delhi','Hisar','Haryana',125121,8570934858,'akshay.a','2020-01-01','E'

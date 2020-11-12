@@ -3,12 +3,24 @@ using AddressBook_ADO.NET;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using RestSharp;
+using Newtonsoft.Json;
 
 namespace AddressBookADOTests
 {
     [TestClass]
     public class UnitTest1
     {
+        //declaring restclient variable
+        RestClient client;
+        /// <summary>
+        /// Setups this instance for the client by giving url along with port.
+        /// </summary>
+        [TestInitialize]
+        public void Setup()
+        {
+            client = new RestClient("http://localhost:3000");
+        }
         /// <summary>
         /// Updates the contact details. UC17
         /// </summary>
@@ -136,6 +148,29 @@ namespace AddressBookADOTests
             stopwatch.Stop();
             Console.WriteLine("Elapsed Time: " + stopwatch.Elapsed);
             
+        }
+        [TestMethod]
+        public void onCallingGetApi_ReturnAddressBook()
+        {
+            //arrange
+            //makes restrequest for getting all the data from json server by giving table name and method.get
+            RestRequest request = new RestRequest("/AddressBook", Method.GET);
+            //act
+            //executing the request using client and saving the result in IrestResponse.
+            IRestResponse response = client.Execute(request);
+            //assert
+            //assert for checking status code of get
+            Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
+            //adding the data into list from irestresponse by using deserializing.
+            List<AddressBookContactDetails> dataResponse = JsonConvert.DeserializeObject<List<AddressBookContactDetails>>(response.Content);
+            //printing out the content for list of address book contact details
+            foreach(AddressBookContactDetails contactDetails in dataResponse)
+            {
+                Console.WriteLine("AddressBookName:- " + contactDetails.addressBookName + " First Name:- " + contactDetails.firstName + " Last Name:- " + contactDetails.lastName + " Address:- " + contactDetails.address + " City:- " + contactDetails.city + " State:- " + contactDetails.state + " Zip:- " + contactDetails.zip + " phone number:- " + contactDetails.phoneNo + " Email:- " + contactDetails.eMail + " Date:-" + contactDetails.dateAdded);
+            }
+            //adding data in database using threading
+            AddressBookOperations addressBookOperations = new AddressBookOperations();
+            addressBookOperations.AddingMultipleContactDetailsUsingThreading(dataResponse);
         }
     }
  
