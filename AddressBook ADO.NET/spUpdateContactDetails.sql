@@ -15,9 +15,9 @@ begin
 update a
 set a.address= @address,a.city=@city,a.state= @state,a.zip=@zip,a.phoneNumber=@phonenumber,a.eMail= @email
 from AddressBook a
-join addressbookMapper b 
+ join addressbookMapper b 
 on a.contactid= b.contactid
-join AddressBookNames c
+ join AddressBookNames c
 on c.addressBookId = b.addressbookid
 where a.firstName=@firstname and a.lastName=@lastname and c.addressBookName= @addressbookname
 end

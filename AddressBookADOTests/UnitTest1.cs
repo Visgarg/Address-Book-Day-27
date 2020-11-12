@@ -150,6 +150,9 @@ namespace AddressBookADOTests
             Console.WriteLine("Elapsed Time: " + stopwatch.Elapsed);
             
         }
+        /// <summary>
+        /// Ons the calling get API return address book. UC22
+        /// </summary>
         [TestMethod]
         public void onCallingGetApi_ReturnAddressBook()
         {
@@ -174,6 +177,9 @@ namespace AddressBookADOTests
             AddressBookOperations addressBookOperations = new AddressBookOperations();
             addressBookOperations.AddingMultipleContactDetailsUsingThreading(dataResponse);
         }
+        /// <summary>
+        /// Givens the contact detail on post should be added in json server. UC23
+        /// </summary>
         [TestMethod]
         public void givenContactDetail_OnPost_ShouldBeAddedInJsonServer()
         {
@@ -216,6 +222,59 @@ namespace AddressBookADOTests
 
 
             });
+        }
+        /// <summary>
+        /// Givens the contact detail and updated in json server and database. UC24
+        /// </summary>
+        [TestMethod]
+        public void givenContactDetail_updateInJsonServer_andDatabase()
+        {
+            AddressBookContactDetails contact = new AddressBookContactDetails();
+            contact.firstName = "Mahak";
+            contact.lastName = "Singla";
+            contact.address = "New Grain Market";
+            contact.city = "Barwala";
+            contact.state = "Haryana";
+            contact.zip = 125125;
+            contact.phoneNo = 7014245875;
+            contact.eMail = "mahak.singla@gmail.com";
+            contact.addressBookName = "A";
+
+            //making a request for a particular employee to be updated
+            RestRequest request = new RestRequest("AddressBook/4", Method.PUT);
+            //creating a jobject for new data to be added in place of old
+            //json represents a new json object
+            JObject jObject = new JObject();
+            jObject.Add("firstName", contact.firstName);
+            jObject.Add("lastName", contact.lastName);
+            jObject.Add("address", contact.address);
+            jObject.Add("city", contact.city);
+            jObject.Add("state", contact.state);
+            jObject.Add("zip", contact.zip);
+            jObject.Add("phoneNo", contact.phoneNo);
+            jObject.Add("eMail", contact.eMail);
+            jObject.Add("addressBookName", contact.addressBookName);
+            //adding parameters in request
+            //request body parameter type signifies values added using add.
+            request.AddParameter("application/json", jObject, ParameterType.RequestBody);
+            //executing request using client
+            //IRest response act as a container for the data sent back from api.
+            IRestResponse response = client.Execute(request);
+            //checking status code of response
+            Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
+            //deserializing content added in json file
+            AddressBookContactDetails dataResponse = JsonConvert.DeserializeObject<AddressBookContactDetails>(response.Content);
+            //asserting for salary
+            Assert.AreEqual(dataResponse.address, "New Grain Market");
+            //writing content without deserializing from resopnse. 
+            Console.WriteLine(response.Content);
+
+            //updating data in database using threading
+            AddressBookOperations addressBookOperations = new AddressBookOperations();
+            addressBookOperations.UpdateContactDetailsInDataBase(contact);
+            //checking if details are updated
+            AddressBookContactDetails expected = addressBookOperations.GettingUpdatedDetails(contact);
+            Assert.AreEqual(contact, expected);
         }
     }
  
