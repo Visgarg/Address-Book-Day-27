@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using RestSharp;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AddressBookADOTests
 {
@@ -169,8 +170,52 @@ namespace AddressBookADOTests
                 Console.WriteLine("AddressBookName:- " + contactDetails.addressBookName + " First Name:- " + contactDetails.firstName + " Last Name:- " + contactDetails.lastName + " Address:- " + contactDetails.address + " City:- " + contactDetails.city + " State:- " + contactDetails.state + " Zip:- " + contactDetails.zip + " phone number:- " + contactDetails.phoneNo + " Email:- " + contactDetails.eMail + " Date:-" + contactDetails.dateAdded);
             }
             //adding data in database using threading
+            //adding multiple entries
             AddressBookOperations addressBookOperations = new AddressBookOperations();
             addressBookOperations.AddingMultipleContactDetailsUsingThreading(dataResponse);
+        }
+        [TestMethod]
+        public void givenContactDetail_OnPost_ShouldBeAddedInJsonServer()
+        {
+            //instatiating object for address book operations
+            AddressBookOperations addressBookOperations = new AddressBookOperations();
+            //getting list of multiple contacts to be added in json server
+            List<AddressBookContactDetails> contactDetails = addressBookOperations.GetAllContactDetails();
+            //adding each entry in jsonserver
+            contactDetails.ForEach(contact =>
+            {
+                //arrange
+                //adding request to post(add) data
+                RestRequest request = new RestRequest("/AddressBook", Method.POST);
+                //instatiating jObject for adding data
+                JObject jObject = new JObject();
+                jObject.Add("firstName", contact.firstName);
+                jObject.Add("lastName", contact.lastName);
+                jObject.Add("address", contact.address);
+                jObject.Add("city", contact.city);
+                jObject.Add("state", contact.state);
+                jObject.Add("zip", contact.zip);
+                jObject.Add("phoneNo", contact.phoneNo);
+                jObject.Add("eMail", contact.eMail);
+                jObject.Add("addressBookName", contact.addressBookName);
+                //as parameters are passed as body hence "request body" call is made, in parameter type
+                request.AddParameter("application/json", jObject, ParameterType.RequestBody);
+                //Act
+                //request contains method of post and along with added parameter which contains data to be added
+                //hence response will contain the data which is added and not all the data from jsonserver.
+                //data is added to json server json file in this step.
+                IRestResponse response = client.Execute(request);
+                //assert
+                //code will be 201 for posting data
+                Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.Created);
+                //derserializing object for assert and checking test case
+               AddressBookContactDetails dataResponse = JsonConvert.DeserializeObject<AddressBookContactDetails>(response.Content);
+                Assert.AreEqual(contact.firstName, dataResponse.firstName);
+                Assert.AreEqual(contact.phoneNo, dataResponse.phoneNo);
+                Console.WriteLine(response.Content);
+
+
+            });
         }
     }
  
