@@ -276,6 +276,22 @@ namespace AddressBookADOTests
             AddressBookContactDetails expected = addressBookOperations.GettingUpdatedDetails(contact);
             Assert.AreEqual(contact, expected);
         }
+        /// <summary>
+        /// Givens the employee on delete should return success status. UC25
+        /// </summary>
+        [TestMethod]
+        public void GivenEmployee_OnDelete_ShouldReturnSuccessStatus()
+        {
+            //request for deleting elements from json 
+            RestRequest request = new RestRequest("AddressBook/2", Method.DELETE);
+            //executing request using rest client
+            IRestResponse response = client.Execute(request);
+            //console writeline will print null for response content after delete operation
+            Console.WriteLine(response.Content);
+            //checking status codes.
+            Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
+        }
     }
+
  
 }
